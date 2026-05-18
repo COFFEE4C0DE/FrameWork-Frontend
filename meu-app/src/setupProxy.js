@@ -29,4 +29,18 @@ module.exports = function setupProxy(app) {
       changeOrigin: true,
     })
   );
+  app.use(
+    "/sales",
+    createProxyMiddleware({
+      target: "https://framework-backend-gm8v.onrender.com",
+      changeOrigin: true,
+    })
+  );
+  app.use(
+    "/reports",
+    createProxyMiddleware({
+      target: "https://framework-backend-gm8v.onrender.com",
+      changeOrigin: true,
+    })
+  );
 };

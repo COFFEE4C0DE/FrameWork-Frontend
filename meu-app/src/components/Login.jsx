@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Home from "./Home";
+import { trackedFetch } from "../services/requestLoader";
 
 function Login({ emailInicial = "", onCadastroClick }) {
   const [formData, setFormData] = useState({
@@ -32,7 +33,7 @@ function Login({ emailInicial = "", onCadastroClick }) {
     setSuccessMessage("");
 
     try {
-      const response = await fetch("/login", {
+      const response = await trackedFetch("/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,7 +54,7 @@ function Login({ emailInicial = "", onCadastroClick }) {
         data?.data?.access_token;
 
       if (!tokenRecebido) {
-        throw new Error("Token nao recebido no login.");
+        throw new Error("Token não recebido no login.");
       }
 
       setToken(tokenRecebido);
@@ -63,7 +64,7 @@ function Login({ emailInicial = "", onCadastroClick }) {
       window.history.pushState(null, "", "/home");
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      setErrorMessage(error.message || "Não foi possivel fazer login.");
+      setErrorMessage(error.message || "Não foi possível fazer login.");
     } finally {
       setIsLoading(false);
     }

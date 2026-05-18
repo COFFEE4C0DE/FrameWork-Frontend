@@ -44,7 +44,7 @@ function Products({ token = "" }) {
     async ({ silent = false } = {}) => {
       if (!authToken) {
         setIsLoading(false);
-        setErrorMessage("Sessao expirada. Faca login novamente para carregar os produtos.");
+        setErrorMessage("Sessão expirada. Faça login novamente para carregar os produtos.");
         return;
       }
 
@@ -60,7 +60,7 @@ function Products({ token = "" }) {
       } catch (error) {
         console.error("Erro ao carregar produtos:", error);
         setErrorMessage(
-          error.message || "Nao foi possivel carregar os produtos. Tente novamente em instantes."
+          error.message || "Não foi possível carregar os produtos. Tente novamente em instantes."
         );
       } finally {
         setIsLoading(false);
@@ -165,7 +165,7 @@ function Products({ token = "" }) {
       await loadProducts({ silent: true });
     } catch (error) {
       console.error("Erro ao salvar produto:", error);
-      setErrorMessage(error.message || "Nao foi possivel salvar o produto.");
+      setErrorMessage(error.message || "Não foi possível salvar o produto.");
     } finally {
       setIsSaving(false);
     }
@@ -175,7 +175,7 @@ function Products({ token = "" }) {
     const productId = getProductId(product);
 
     if (!productId) {
-      setErrorMessage("Nao foi possivel identificar o produto selecionado.");
+      setErrorMessage("Não foi possível identificar o produto selecionado.");
       return;
     }
 
@@ -188,7 +188,7 @@ function Products({ token = "" }) {
       setSelectedProduct(getProductFromResponse(data));
     } catch (error) {
       console.error("Erro ao buscar produto:", error);
-      setErrorMessage(error.message || "Nao foi possivel carregar os detalhes do produto.");
+      setErrorMessage(error.message || "Não foi possível carregar os detalhes do produto.");
     } finally {
       setIsDetailsLoading(false);
     }
@@ -198,7 +198,7 @@ function Products({ token = "" }) {
     const productId = getProductId(product);
 
     if (!productId) {
-      setErrorMessage("Nao foi possivel identificar o produto selecionado.");
+      setErrorMessage("Não foi possível identificar o produto selecionado.");
       return;
     }
 
@@ -219,7 +219,7 @@ function Products({ token = "" }) {
       }
     } catch (error) {
       console.error("Erro ao alterar status:", error);
-      setErrorMessage(error.message || "Nao foi possivel alterar o status do produto.");
+      setErrorMessage(error.message || "Não foi possível alterar o status do produto.");
     } finally {
       setStatusLoadingId("");
     }
@@ -235,7 +235,7 @@ function Products({ token = "" }) {
           <h1 id="products-title">Controle de produtos</h1>
           <p>
             Cadastre, acompanhe estoque, atualize status e mantenha as imagens
-            dos produtos do mini mercado em um unico lugar.
+            dos produtos do mini mercado em um único lugar.
           </p>
         </div>
 
@@ -362,7 +362,7 @@ function EmptyProductsState({ onCreate }) {
     <section className="products-empty-state">
       <span className="products-eyebrow">Lista vazia</span>
       <h2>Nenhum produto cadastrado ainda.</h2>
-      <p>Cadastre seu primeiro produto para comecar.</p>
+      <p>Cadastre seu primeiro produto para começar.</p>
       <button type="button" className="products-primary-button" onClick={onCreate}>
         Cadastrar produto
       </button>

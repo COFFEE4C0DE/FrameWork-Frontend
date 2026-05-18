@@ -41,7 +41,7 @@ function ProductCard({
 
         <div className="product-card-metrics">
           <div>
-            <span>Preco</span>
+            <span>Preço</span>
             <strong>{formatCurrency(getProductPrice(product))}</strong>
           </div>
           <div>
@@ -51,7 +51,7 @@ function ProductCard({
         </div>
 
         {lowStock && (
-          <p className="product-low-stock">Baixo estoque: revise a reposicao.</p>
+          <p className="product-low-stock">Baixo estoque: revise a reposição.</p>
         )}
 
         <div className="product-card-actions">

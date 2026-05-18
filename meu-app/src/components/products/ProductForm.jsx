@@ -60,7 +60,7 @@ function ProductForm({ product, isSubmitting, onSubmit, onClose }) {
     }
 
     if (formData.preco === "" || !Number.isFinite(price) || price < 0) {
-      nextErrors.preco = "Informe um preco maior ou igual a zero.";
+      nextErrors.preco = "Informe um preço maior ou igual a zero.";
     }
 
     if (formData.qtd === "" || !Number.isFinite(quantity) || quantity < 0) {
@@ -89,16 +89,16 @@ function ProductForm({ product, isSubmitting, onSubmit, onClose }) {
   return (
     <div className="product-modal" role="dialog" aria-modal="true">
       <button className="product-modal-backdrop" type="button" onClick={onClose}>
-        <span>Fechar formulario</span>
+        <span>Fechar formulário</span>
       </button>
 
       <section className="product-form-panel" aria-labelledby="product-form-title">
         <div className="product-form-header">
-          <span>{isEditing ? "Edicao" : "Novo cadastro"}</span>
+          <span>{isEditing ? "Edição" : "Novo cadastro"}</span>
           <h2 id="product-form-title">
             {isEditing ? "Editar produto" : "Cadastrar produto"}
           </h2>
-          <button type="button" onClick={onClose} aria-label="Fechar formulario">
+          <button type="button" onClick={onClose} aria-label="Fechar formulário">
             X
           </button>
         </div>
@@ -120,7 +120,7 @@ function ProductForm({ product, isSubmitting, onSubmit, onClose }) {
 
           <div className="form-row">
             <div className="form-field">
-              <label htmlFor="productPreco">Preco</label>
+              <label htmlFor="productPreco">Preço</label>
               <input
                 type="number"
                 id="productPreco"
@@ -184,7 +184,7 @@ function ProductForm({ product, isSubmitting, onSubmit, onClose }) {
 
           {formData.image && (
             <div className="product-image-preview">
-              <img src={formData.image} alt="Previa do produto" />
+              <img src={formData.image} alt="Prévia do produto" />
             </div>
           )}
 
@@ -196,7 +196,7 @@ function ProductForm({ product, isSubmitting, onSubmit, onClose }) {
               {isSubmitting
                 ? "Salvando..."
                 : isEditing
-                ? "Salvar alteracoes"
+                ? "Salvar alterações"
                 : "Cadastrar produto"}
             </button>
           </div>

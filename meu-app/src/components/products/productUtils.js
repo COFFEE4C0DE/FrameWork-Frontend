@@ -48,12 +48,12 @@ export function normalizeStatusValue(status) {
   if (typeof status === "string") {
     const statusLower = status.trim().toLowerCase();
 
-    if (["ativo", "active", "true", "1", "disponivel"].includes(statusLower)) {
+    if (["ativo", "active", "true", "1", "disponível", "disponivel"].includes(statusLower)) {
       return true;
     }
 
     if (
-      ["inativo", "inactive", "false", "0", "indisponivel", "esgotado"].includes(
+      ["inativo", "inactive", "false", "0", "indisponível", "indisponivel", "esgotado"].includes(
         statusLower
       )
     ) {
@@ -80,7 +80,7 @@ export function getStatusMeta(product) {
 
     if (statusLower.includes("indispon")) {
       return {
-        label: "Indisponivel",
+        label: "Indisponível",
         className: "is-unavailable",
       };
     }

@@ -44,7 +44,7 @@ function ProductDetails({
 
           <dl className="product-details-list">
             <div>
-              <dt>Preco</dt>
+              <dt>Preço</dt>
               <dd>{formatCurrency(getProductPrice(product))}</dd>
             </div>
             <div>

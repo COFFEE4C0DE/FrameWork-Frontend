@@ -2,6 +2,8 @@ import { useState } from "react";
 import Login from "./Login";
 import Home from "./Home";
 import Products from "./Products";
+import Sales from "./Sales";
+import { trackedFetch } from "../services/requestLoader";
 
 function Cadastro() {
   const [formData, setFormData] = useState({
@@ -27,6 +29,10 @@ function Cadastro() {
 
     if (path.startsWith("/produtos")) {
       return hasToken ? "produtos" : "login";
+    }
+
+    if (path.startsWith("/vendas")) {
+      return hasToken ? "vendas" : "login";
     }
 
     if (path === "/home" || hasToken) {
@@ -65,7 +71,7 @@ function Cadastro() {
     setErrorMessage("");
 
     try {
-      const response = await fetch("/user", {
+      const response = await trackedFetch("/user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +96,7 @@ function Cadastro() {
       window.history.pushState(null, "", "/ativacao-conta");
     } catch (error) {
       console.error("Erro ao enviar dados:", error);
-      setErrorMessage("Não foi possivel finalizar o cadastro. Tente novamente.");
+      setErrorMessage("Não foi possível finalizar o cadastro. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -127,6 +133,10 @@ function Cadastro() {
 
   if (etapa === "produtos") {
     return <Products token={token} />;
+  }
+
+  if (etapa === "vendas") {
+    return <Sales token={token} />;
   }
 
   return (
@@ -212,7 +222,7 @@ function Cadastro() {
               name="senha"
               value={formData.senha}
               onChange={handleChange}
-              placeholder="Minimo de 8 caracteres"
+              placeholder="Mínimo de 8 caracteres"
               autoComplete="new-password"
               minLength="8"
               required
@@ -230,7 +240,7 @@ function Cadastro() {
             className="auth-switch-button"
             onClick={navegarParaLogin}
           >
-            Ja tenho uma conta
+            Já tenho uma conta
           </button>
         </form>
       </section>
@@ -255,7 +265,7 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida }) {
     setActivationError("");
 
     try {
-      const response = await fetch("/ativarUsuario", {
+      const response = await trackedFetch("/ativarUsuario", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -275,9 +285,9 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida }) {
       setActivationStatus("Conta ativada com sucesso.");
       window.setTimeout(onAtivacaoConcluida, 900);
     } catch (error) {
-      console.error("Erro ao ativar usuario:", error);
+      console.error("Erro ao ativar usuário:", error);
       setActivationError(
-        error.message || "Não foi possivel ativar a conta. Tente novamente."
+        error.message || "Não foi possível ativar a conta. Tente novamente."
       );
     } finally {
       setIsActivating(false);
@@ -290,8 +300,8 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida }) {
         <span className="ativacao-status">Cadastro realizado</span>
         <h1 id="ativacao-title">Ative sua conta</h1>
         <p>
-          Enviamos um codigo de ativacao pelo WhatsApp. Digite o codigo abaixo
-          para confirmar o usuario cadastrado com o e-mail{" "}
+          Enviamos um código de ativação pelo WhatsApp. Digite o código abaixo
+          para confirmar o usuário cadastrado com o e-mail{" "}
           <strong>{emailUsuario}</strong>.
         </p>
 
@@ -302,7 +312,7 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida }) {
           </div>
           <div>
             <strong>2</strong>
-            <span>Digite o codigo enviado pela Twilio.</span>
+            <span>Digite o código enviado pela Twilio.</span>
           </div>
           <div>
             <strong>3</strong>
@@ -312,7 +322,7 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida }) {
 
         <form className="ativacao-form" onSubmit={ativarUsuario}>
           <div className="form-field">
-            <label htmlFor="codigoAtivacao">Codigo de ativacao</label>
+            <label htmlFor="codigoAtivacao">Código de ativação</label>
             <input
               type="text"
               id="codigoAtivacao"
@@ -321,7 +331,7 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida }) {
               onChange={handleCodigoChange}
               inputMode="numeric"
               maxLength="8"
-              placeholder="Digite o codigo"
+              placeholder="Digite o código"
               autoComplete="one-time-code"
               required
             />

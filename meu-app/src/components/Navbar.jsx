@@ -2,7 +2,6 @@ const menuItems = [
   { label: "Produtos", href: "/produtos" },
   // { label: "Cadastrar produto", href: "/produtos/cadastro" },
   //{ label: "Editar produto", href: "/produtos/edicao" },
-  { label: "Cadastrar venda", href: "/vendas/cadastro" },
   { label: "Vendas", href: "/vendas" },
   { label: "Dashboard", href: "/dashboard" },
 ];
@@ -20,11 +19,11 @@ function Navbar() {
 
   return (
     <header className="app-navbar">
-      <a className="app-brand" href="/home" aria-label="Inicio do sistema">
+      <a className="app-brand" href="/home" aria-label="Início do sistema">
         twentyone market
       </a>
 
-      <nav className="app-nav" aria-label="Paginas do sistema">
+      <nav className="app-nav" aria-label="Páginas do sistema">
         {menuItems.map((item) => (
           <a
             key={item.href}

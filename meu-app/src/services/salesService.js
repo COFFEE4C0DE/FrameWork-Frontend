@@ -20,10 +20,36 @@ async function parseResponse(response) {
     const apiMessage =
       data?.erro || data?.error || data?.message || data?.mensagem || data;
 
+    if (typeof apiMessage === "string" && apiMessage.includes("Cannot POST /sales")) {
+      throw new Error(
+        "A rota de vendas não foi encontrada no servidor local. Reinicie o npm start para carregar o proxy atualizado."
+      );
+    }
+
+    if (typeof apiMessage === "string" && apiMessage.trim().startsWith("<!DOCTYPE html>")) {
+      throw new Error("Não foi possível registrar a venda. Verifique se o backend e o proxy estão ativos.");
+    }
+
     throw new Error(apiMessage || "Não foi possível concluir a solicitação.");
   }
 
   return data;
+}
+
+function buildQuery({ startDate, endDate } = {}) {
+  const params = new URLSearchParams();
+
+  if (startDate) {
+    params.set("start_date", startDate);
+  }
+
+  if (endDate) {
+    params.set("end_date", endDate);
+  }
+
+  const query = params.toString();
+
+  return query ? `?${query}` : "";
 }
 
 async function request(path, { method = "GET", body, token } = {}) {
@@ -45,34 +71,18 @@ async function request(path, { method = "GET", body, token } = {}) {
   return parseResponse(response);
 }
 
-export function listProducts(token) {
-  return request("/products", { token });
+export function listSales(filters = {}, token) {
+  return request(`/sales${buildQuery(filters)}`, { token });
 }
 
-export function getProductById(productId, token) {
-  return request(`/products/${productId}`, { token });
-}
-
-export function createProduct(product, token) {
-  return request("/products", {
+export function createSale(sale, token) {
+  return request("/sales", {
     method: "POST",
-    body: product,
+    body: sale,
     token,
   });
 }
 
-export function updateProduct(productId, product, token) {
-  return request(`/products/${productId}`, {
-    method: "PUT",
-    body: product,
-    token,
-  });
-}
-
-export function updateProductStatus(productId, status, token) {
-  return request(`/products/${productId}/status`, {
-    method: "PATCH",
-    body: { status },
-    token,
-  });
+export function getSalesReport(filters = {}, token) {
+  return request(`/reports/sales${buildQuery(filters)}`, { token });
 }
