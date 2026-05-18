@@ -4,6 +4,8 @@ import { useAuth } from "../auth/AuthContext";
 import { trackedApiFetch } from "../services/requestLoader";
 
 const ACTIVATION_EMAIL_KEY = "activation_email";
+const CELULAR_PREFIX = "55";
+const MAX_CELULAR_LENGTH = 13;
 
 function Cadastro() {
   const navigate = useNavigate();
@@ -13,7 +15,7 @@ function Cadastro() {
     nome: "",
     cnpj: "",
     email: "",
-    celular: "",
+    celular: CELULAR_PREFIX,
     senha: "",
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -38,10 +40,21 @@ function Cadastro() {
 
   function handleChange(event) {
     const { name, value } = event.target;
-    const numericFields = ["cnpj", "celular"];
-    const nextValue = numericFields.includes(name)
-      ? value.replace(/\D/g, "")
-      : value;
+    let nextValue = value;
+
+    if (name === "celular") {
+      const numericValue = value.replace(/\D/g, "");
+      const valueWithoutPrefix = numericValue
+        .replace(/^(?:55)+/, "")
+        .replace(/^5$/, "");
+
+      nextValue = `${CELULAR_PREFIX}${valueWithoutPrefix}`.slice(
+        0,
+        MAX_CELULAR_LENGTH
+      );
+    } else if (name === "cnpj") {
+      nextValue = value.replace(/\D/g, "");
+    }
 
     setFormData((currentData) => ({
       ...currentData,
@@ -73,7 +86,7 @@ function Cadastro() {
         nome: "",
         cnpj: "",
         email: "",
-        celular: "",
+        celular: CELULAR_PREFIX,
         senha: "",
       });
       navigate("/ativacao-conta", { replace: true });
@@ -156,8 +169,8 @@ function Cadastro() {
                 value={formData.celular}
                 onChange={handleChange}
                 inputMode="numeric"
-                maxLength="14"
-                placeholder="11999999999"
+                maxLength={MAX_CELULAR_LENGTH}
+                placeholder="5511999999999"
                 autoComplete="tel"
                 required
               />
