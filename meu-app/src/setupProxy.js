@@ -22,4 +22,11 @@ module.exports = function setupProxy(app) {
       changeOrigin: true,
     })
   );
+  app.use(
+    "/products",
+    createProxyMiddleware({
+      target: "https://framework-backend-gm8v.onrender.com",
+      changeOrigin: true,
+    })
+  );
 };

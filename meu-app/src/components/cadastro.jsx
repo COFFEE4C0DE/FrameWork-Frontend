@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Login from "./Login";
+import Home from "./Home";
+import Products from "./Products";
 
 function Cadastro() {
   const [formData, setFormData] = useState({
@@ -11,9 +13,28 @@ function Cadastro() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [etapa, setEtapa] = useState(() =>
-    window.location.pathname === "/login" ? "login" : "cadastro"
+  const [token] = useState(
+    () => localStorage.getItem("token") || localStorage.getItem("access_token") || ""
   );
+  const [etapa, setEtapa] = useState(() => {
+    const path = window.location.pathname;
+    const hasToken =
+      localStorage.getItem("token") || localStorage.getItem("access_token");
+
+    if (path === "/login") {
+      return "login";
+    }
+
+    if (path.startsWith("/produtos")) {
+      return hasToken ? "produtos" : "login";
+    }
+
+    if (path === "/home" || hasToken) {
+      return "home";
+    }
+
+    return "cadastro";
+  });
   const [emailUsuario, setEmailUsuario] = useState("");
 
   function navegarParaLogin() {
@@ -98,6 +119,14 @@ function Cadastro() {
         onCadastroClick={navegarParaCadastro}
       />
     );
+  }
+
+  if (etapa === "home") {
+    return <Home token={token} />;
+  }
+
+  if (etapa === "produtos") {
+    return <Products token={token} />;
   }
 
   return (

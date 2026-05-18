@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Home from "./Home";
 
 function Login({ emailInicial = "", onCadastroClick }) {
   const [formData, setFormData] = useState({
@@ -8,6 +9,12 @@ function Login({ emailInicial = "", onCadastroClick }) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [token, setToken] = useState(
+    () => localStorage.getItem("token") || localStorage.getItem("access_token") || ""
+  );
+  const [isAuthenticated, setIsAuthenticated] = useState(() =>
+    Boolean(localStorage.getItem("token") || localStorage.getItem("access_token"))
+  );
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -39,14 +46,31 @@ function Login({ emailInicial = "", onCadastroClick }) {
         throw new Error(data?.erro || "Login inválido.");
       }
 
-      localStorage.setItem("access_token", data.access_token);
+      const tokenRecebido =
+        data?.token ||
+        data?.access_token ||
+        data?.data?.token ||
+        data?.data?.access_token;
+
+      if (!tokenRecebido) {
+        throw new Error("Token nao recebido no login.");
+      }
+
+      setToken(tokenRecebido);
+      localStorage.setItem("token", tokenRecebido);
       setSuccessMessage("Login realizado com sucesso.");
+      setIsAuthenticated(true);
+      window.history.pushState(null, "", "/home");
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       setErrorMessage(error.message || "Não foi possivel fazer login.");
     } finally {
       setIsLoading(false);
     }
+  }
+
+  if (isAuthenticated) {
+    return <Home token={token} />;
   }
 
   return (
