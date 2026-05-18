@@ -437,7 +437,7 @@ select {
 
 .landing-actions .product-secondary-button {
   border-color: rgba(255, 255, 255, 0.45);
-  color: #ffffff;
+  color: #000;
 }
 
 .landing-actions .product-secondary-button:hover {
