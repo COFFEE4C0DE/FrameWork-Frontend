@@ -119,8 +119,8 @@ function Products() {
         }
       } catch (error) {
         if (isMounted) {
-          console.error("Erro ao buscar produto para ediÃ§Ã£o:", error);
-          setErrorMessage(error.message || "NÃ£o foi possÃ­vel carregar o produto para ediÃ§Ã£o.");
+          console.error("Erro ao buscar produto para edição:", error);
+          setErrorMessage(error.message || "Não foi possível carregar o produto para edição.");
           navigate("/produtos", { replace: true });
         }
       }

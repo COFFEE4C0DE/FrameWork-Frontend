@@ -79,7 +79,7 @@ function Cadastro() {
       navigate("/ativacao-conta", { replace: true });
     } catch (error) {
       console.error("Erro ao enviar dados:", error);
-      setErrorMessage("Nao foi possivel finalizar o cadastro. Tente novamente.");
+      setErrorMessage("Não foi possível finalizar o cadastro. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -141,7 +141,7 @@ function Cadastro() {
                 onChange={handleChange}
                 inputMode="numeric"
                 maxLength="14"
-                placeholder="Somente numeros"
+                placeholder="Somente números"
                 autoComplete="off"
                 required
               />
@@ -186,7 +186,7 @@ function Cadastro() {
               name="senha"
               value={formData.senha}
               onChange={handleChange}
-              placeholder="Minimo de 8 caracteres"
+              placeholder="Mínimo de 8 caracteres"
               autoComplete="new-password"
               minLength="8"
               required
@@ -204,7 +204,7 @@ function Cadastro() {
             className="auth-switch-button"
             onClick={() => navigate("/login")}
           >
-            Ja tenho uma conta
+            Já tenho uma conta
           </button>
         </form>
       </section>
@@ -249,9 +249,9 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida, onVoltarInicio }) {
       setActivationStatus("Conta ativada com sucesso.");
       window.setTimeout(onAtivacaoConcluida, 900);
     } catch (error) {
-      console.error("Erro ao ativar usuario:", error);
+      console.error("Erro ao ativar usuário:", error);
       setActivationError(
-        error.message || "Nao foi possivel ativar a conta. Tente novamente."
+        error.message || "Não foi possível ativar a conta. Tente novamente."
       );
     } finally {
       setIsActivating(false);
@@ -264,19 +264,19 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida, onVoltarInicio }) {
         <span className="ativacao-status">Cadastro realizado</span>
         <h1 id="ativacao-title">Ative sua conta</h1>
         <p>
-          Enviamos um codigo de ativacao pelo WhatsApp. Digite o codigo abaixo
-          para confirmar o usuario cadastrado com o e-mail{" "}
-          <strong>{emailUsuario || "nao informado"}</strong>.
+          Enviamos um código de ativação pelo WhatsApp. Digite o código abaixo
+          para confirmar o usuário cadastrado com o e-mail{" "}
+          <strong>{emailUsuario || "não informado"}</strong>.
         </p>
 
-        <div className="ativacao-steps" aria-label="Proximos passos">
+        <div className="ativacao-steps" aria-label="Próximos passos">
           <div>
             <strong>1</strong>
             <span>Abra a mensagem recebida no WhatsApp.</span>
           </div>
           <div>
             <strong>2</strong>
-            <span>Digite o codigo enviado pela Twilio.</span>
+            <span>Digite o código enviado pela Twilio.</span>
           </div>
           <div>
             <strong>3</strong>
@@ -286,7 +286,7 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida, onVoltarInicio }) {
 
         <form className="ativacao-form" onSubmit={ativarUsuario}>
           <div className="form-field">
-            <label htmlFor="codigoAtivacao">Codigo de ativacao</label>
+            <label htmlFor="codigoAtivacao">Código de ativação</label>
             <input
               type="text"
               id="codigoAtivacao"
@@ -295,7 +295,7 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida, onVoltarInicio }) {
               onChange={handleCodigoChange}
               inputMode="numeric"
               maxLength="8"
-              placeholder="Digite o codigo"
+              placeholder="Digite o código"
               autoComplete="one-time-code"
               required
             />
@@ -320,7 +320,7 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida, onVoltarInicio }) {
           className="ativacao-secondary-button"
           onClick={onVoltarInicio}
         >
-          Voltar ao inicio
+          Voltar ao início
         </button>
       </section>
     </main>

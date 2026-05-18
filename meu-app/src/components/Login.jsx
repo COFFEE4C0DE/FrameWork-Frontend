@@ -61,7 +61,7 @@ function Login() {
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        throw new Error(data?.erro || "Login invalido.");
+        throw new Error(data?.erro || "Login inválido.");
       }
 
       const tokenRecebido =
@@ -71,7 +71,7 @@ function Login() {
         data?.data?.access_token;
 
       if (!tokenRecebido) {
-        throw new Error("Token nao recebido no login.");
+        throw new Error("Token não recebido no login.");
       }
 
       login(tokenRecebido);
@@ -79,7 +79,7 @@ function Login() {
       navigate("/home", { replace: true });
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      setErrorMessage(error.message || "Nao foi possivel fazer login.");
+      setErrorMessage(error.message || "Não foi possível fazer login.");
     } finally {
       setIsLoading(false);
     }
