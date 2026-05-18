@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 import Navbar from "./Navbar";
 import { listProducts } from "../services/productsService";
 import {
@@ -13,10 +15,11 @@ import SalesList from "./sales/SalesList";
 import SalesReportCards from "./sales/SalesReportCards";
 import { getProductAvailability, getSalesListFromResponse } from "./sales/saleUtils";
 
-function Sales({ token = "" }) {
-  const [authToken] = useState(
-    () => token || localStorage.getItem("token") || localStorage.getItem("access_token") || ""
-  );
+function Sales() {
+  const { token: authToken } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isFormOpen = location.pathname === "/vendas/cadastro";
   const [products, setProducts] = useState([]);
   const [sales, setSales] = useState([]);
   const [reportData, setReportData] = useState(null);
@@ -26,9 +29,6 @@ function Sales({ token = "" }) {
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isLoadingSales, setIsLoadingSales] = useState(true);
   const [isLoadingReport, setIsLoadingReport] = useState(true);
-  const [isFormOpen, setIsFormOpen] = useState(
-    () => window.location.pathname === "/vendas/cadastro"
-  );
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [reportErrorMessage, setReportErrorMessage] = useState("");
@@ -143,13 +143,11 @@ function Sales({ token = "" }) {
   }, [products]);
 
   function openCreateForm() {
-    setIsFormOpen(true);
-    window.history.pushState(null, "", "/vendas/cadastro");
+    navigate("/vendas/cadastro");
   }
 
   function closeForm() {
-    setIsFormOpen(false);
-    window.history.pushState(null, "", "/vendas");
+    navigate("/vendas");
   }
 
   function handleFilterChange(name, value) {

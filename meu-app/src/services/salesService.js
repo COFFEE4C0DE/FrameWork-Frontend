@@ -1,7 +1,8 @@
-import { trackedFetch } from "./requestLoader";
+import { getStoredToken } from "../auth/tokenStorage";
+import { trackedApiFetch } from "./requestLoader";
 
 function getToken(token) {
-  return token || localStorage.getItem("token") || localStorage.getItem("access_token") || "";
+  return token || getStoredToken();
 }
 
 async function parseResponse(response) {
@@ -59,7 +60,7 @@ async function request(path, { method = "GET", body, token } = {}) {
     throw new Error("Sessão expirada. Faça login novamente para continuar.");
   }
 
-  const response = await trackedFetch(path, {
+  const response = await trackedApiFetch(path, {
     method,
     headers: {
       "Content-Type": "application/json",

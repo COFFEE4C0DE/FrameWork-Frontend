@@ -1,21 +1,38 @@
-import { useState } from "react";
-import Home from "./Home";
-import { trackedFetch } from "../services/requestLoader";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+import { trackedApiFetch } from "../services/requestLoader";
 
-function Login({ emailInicial = "", onCadastroClick }) {
+function Login() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated, login } = useAuth();
   const [formData, setFormData] = useState({
-    email: emailInicial,
+    email: "",
     senha: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [token, setToken] = useState(
-    () => localStorage.getItem("token") || localStorage.getItem("access_token") || ""
-  );
-  const [isAuthenticated, setIsAuthenticated] = useState(() =>
-    Boolean(localStorage.getItem("token") || localStorage.getItem("access_token"))
-  );
+
+  useEffect(() => {
+    if (!location.state?.emailInicial) {
+      return;
+    }
+
+    setFormData((currentData) => ({
+      ...currentData,
+      email: location.state.emailInicial,
+    }));
+  }, [location.state]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    navigate("/home", { replace: true });
+  }, [isAuthenticated, navigate]);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -33,7 +50,7 @@ function Login({ emailInicial = "", onCadastroClick }) {
     setSuccessMessage("");
 
     try {
-      const response = await trackedFetch("/login", {
+      const response = await trackedApiFetch("/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,7 +61,7 @@ function Login({ emailInicial = "", onCadastroClick }) {
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        throw new Error(data?.erro || "Login inválido.");
+        throw new Error(data?.erro || "Login invalido.");
       }
 
       const tokenRecebido =
@@ -54,24 +71,18 @@ function Login({ emailInicial = "", onCadastroClick }) {
         data?.data?.access_token;
 
       if (!tokenRecebido) {
-        throw new Error("Token não recebido no login.");
+        throw new Error("Token nao recebido no login.");
       }
 
-      setToken(tokenRecebido);
-      localStorage.setItem("token", tokenRecebido);
+      login(tokenRecebido);
       setSuccessMessage("Login realizado com sucesso.");
-      setIsAuthenticated(true);
-      window.history.pushState(null, "", "/home");
+      navigate("/home", { replace: true });
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      setErrorMessage(error.message || "Não foi possível fazer login.");
+      setErrorMessage(error.message || "Nao foi possivel fazer login.");
     } finally {
       setIsLoading(false);
     }
-  }
-
-  if (isAuthenticated) {
-    return <Home token={token} />;
   }
 
   return (
@@ -120,7 +131,7 @@ function Login({ emailInicial = "", onCadastroClick }) {
           <button
             type="button"
             className="auth-switch-button"
-            onClick={onCadastroClick}
+            onClick={() => navigate("/cadastro")}
           >
             Criar uma conta
           </button>

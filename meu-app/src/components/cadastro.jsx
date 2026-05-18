@@ -1,11 +1,14 @@
-import { useState } from "react";
-import Login from "./Login";
-import Home from "./Home";
-import Products from "./Products";
-import Sales from "./Sales";
-import { trackedFetch } from "../services/requestLoader";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+import { trackedApiFetch } from "../services/requestLoader";
+
+const ACTIVATION_EMAIL_KEY = "activation_email";
 
 function Cadastro() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     nome: "",
     cnpj: "",
@@ -15,42 +18,22 @@ function Cadastro() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [token] = useState(
-    () => localStorage.getItem("token") || localStorage.getItem("access_token") || ""
+  const [emailUsuario, setEmailUsuario] = useState(
+    () => sessionStorage.getItem(ACTIVATION_EMAIL_KEY) || ""
   );
-  const [etapa, setEtapa] = useState(() => {
-    const path = window.location.pathname;
-    const hasToken =
-      localStorage.getItem("token") || localStorage.getItem("access_token");
 
-    if (path === "/login") {
-      return "login";
+  const isActivationStage = location.pathname === "/ativacao-conta";
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
     }
 
-    if (path.startsWith("/produtos")) {
-      return hasToken ? "produtos" : "login";
-    }
+    navigate("/home", { replace: true });
+  }, [isAuthenticated, navigate]);
 
-    if (path.startsWith("/vendas")) {
-      return hasToken ? "vendas" : "login";
-    }
-
-    if (path === "/home" || hasToken) {
-      return "home";
-    }
-
-    return "cadastro";
-  });
-  const [emailUsuario, setEmailUsuario] = useState("");
-
-  function navegarParaLogin() {
-    setEtapa("login");
-    window.history.pushState(null, "", "/login");
-  }
-
-  function navegarParaCadastro() {
-    setEtapa("cadastro");
-    window.history.pushState(null, "", "/");
+  function navegarParaLogin(emailInicial = "") {
+    navigate("/login", { replace: true, state: emailInicial ? { emailInicial } : undefined });
   }
 
   function handleChange(event) {
@@ -71,7 +54,7 @@ function Cadastro() {
     setErrorMessage("");
 
     try {
-      const response = await trackedFetch("/user", {
+      const response = await trackedApiFetch("/user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,6 +68,7 @@ function Cadastro() {
 
       await response.json().catch(() => null);
       setEmailUsuario(formData.email);
+      sessionStorage.setItem(ACTIVATION_EMAIL_KEY, formData.email);
       setFormData({
         nome: "",
         cnpj: "",
@@ -92,11 +76,10 @@ function Cadastro() {
         celular: "",
         senha: "",
       });
-      setEtapa("ativacao");
-      window.history.pushState(null, "", "/ativacao-conta");
+      navigate("/ativacao-conta", { replace: true });
     } catch (error) {
       console.error("Erro ao enviar dados:", error);
-      setErrorMessage("Não foi possível finalizar o cadastro. Tente novamente.");
+      setErrorMessage("Nao foi possivel finalizar o cadastro. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -107,36 +90,17 @@ function Cadastro() {
     await enviarDados();
   }
 
-  if (etapa === "ativacao") {
+  if (isActivationStage) {
     return (
       <AtivacaoConta
         emailUsuario={emailUsuario}
         onAtivacaoConcluida={() => {
-          navegarParaLogin();
+          sessionStorage.removeItem(ACTIVATION_EMAIL_KEY);
+          navegarParaLogin(emailUsuario);
         }}
+        onVoltarInicio={() => navigate("/", { replace: true })}
       />
     );
-  }
-
-  if (etapa === "login") {
-    return (
-      <Login
-        emailInicial={emailUsuario}
-        onCadastroClick={navegarParaCadastro}
-      />
-    );
-  }
-
-  if (etapa === "home") {
-    return <Home token={token} />;
-  }
-
-  if (etapa === "produtos") {
-    return <Products token={token} />;
-  }
-
-  if (etapa === "vendas") {
-    return <Sales token={token} />;
   }
 
   return (
@@ -177,7 +141,7 @@ function Cadastro() {
                 onChange={handleChange}
                 inputMode="numeric"
                 maxLength="14"
-                placeholder="Somente números"
+                placeholder="Somente numeros"
                 autoComplete="off"
                 required
               />
@@ -222,7 +186,7 @@ function Cadastro() {
               name="senha"
               value={formData.senha}
               onChange={handleChange}
-              placeholder="Mínimo de 8 caracteres"
+              placeholder="Minimo de 8 caracteres"
               autoComplete="new-password"
               minLength="8"
               required
@@ -238,9 +202,9 @@ function Cadastro() {
           <button
             type="button"
             className="auth-switch-button"
-            onClick={navegarParaLogin}
+            onClick={() => navigate("/login")}
           >
-            Já tenho uma conta
+            Ja tenho uma conta
           </button>
         </form>
       </section>
@@ -248,7 +212,7 @@ function Cadastro() {
   );
 }
 
-function AtivacaoConta({ emailUsuario, onAtivacaoConcluida }) {
+function AtivacaoConta({ emailUsuario, onAtivacaoConcluida, onVoltarInicio }) {
   const [codigoAtivacao, setCodigoAtivacao] = useState("");
   const [isActivating, setIsActivating] = useState(false);
   const [activationStatus, setActivationStatus] = useState("");
@@ -265,7 +229,7 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida }) {
     setActivationError("");
 
     try {
-      const response = await trackedFetch("/ativarUsuario", {
+      const response = await trackedApiFetch("/ativarUsuario", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -285,9 +249,9 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida }) {
       setActivationStatus("Conta ativada com sucesso.");
       window.setTimeout(onAtivacaoConcluida, 900);
     } catch (error) {
-      console.error("Erro ao ativar usuário:", error);
+      console.error("Erro ao ativar usuario:", error);
       setActivationError(
-        error.message || "Não foi possível ativar a conta. Tente novamente."
+        error.message || "Nao foi possivel ativar a conta. Tente novamente."
       );
     } finally {
       setIsActivating(false);
@@ -300,19 +264,19 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida }) {
         <span className="ativacao-status">Cadastro realizado</span>
         <h1 id="ativacao-title">Ative sua conta</h1>
         <p>
-          Enviamos um código de ativação pelo WhatsApp. Digite o código abaixo
-          para confirmar o usuário cadastrado com o e-mail{" "}
-          <strong>{emailUsuario}</strong>.
+          Enviamos um codigo de ativacao pelo WhatsApp. Digite o codigo abaixo
+          para confirmar o usuario cadastrado com o e-mail{" "}
+          <strong>{emailUsuario || "nao informado"}</strong>.
         </p>
 
-        <div className="ativacao-steps" aria-label="Próximos passos">
+        <div className="ativacao-steps" aria-label="Proximos passos">
           <div>
             <strong>1</strong>
             <span>Abra a mensagem recebida no WhatsApp.</span>
           </div>
           <div>
             <strong>2</strong>
-            <span>Digite o código enviado pela Twilio.</span>
+            <span>Digite o codigo enviado pela Twilio.</span>
           </div>
           <div>
             <strong>3</strong>
@@ -322,7 +286,7 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida }) {
 
         <form className="ativacao-form" onSubmit={ativarUsuario}>
           <div className="form-field">
-            <label htmlFor="codigoAtivacao">Código de ativação</label>
+            <label htmlFor="codigoAtivacao">Codigo de ativacao</label>
             <input
               type="text"
               id="codigoAtivacao"
@@ -331,7 +295,7 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida }) {
               onChange={handleCodigoChange}
               inputMode="numeric"
               maxLength="8"
-              placeholder="Digite o código"
+              placeholder="Digite o codigo"
               autoComplete="one-time-code"
               required
             />
@@ -354,9 +318,9 @@ function AtivacaoConta({ emailUsuario, onAtivacaoConcluida }) {
         <button
           type="button"
           className="ativacao-secondary-button"
-          onClick={() => window.location.assign("/")}
+          onClick={onVoltarInicio}
         >
-          Voltar ao cadastro
+          Voltar ao inicio
         </button>
       </section>
     </main>

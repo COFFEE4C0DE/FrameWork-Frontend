@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation, useMatch, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 import Navbar from "./Navbar";
 import ProductCard from "./products/ProductCard";
 import ProductDetails from "./products/ProductDetails";
@@ -22,10 +24,14 @@ import {
   normalizeStatusValue,
 } from "./products/productUtils";
 
-function Products({ token = "" }) {
-  const [authToken] = useState(
-    () => token || localStorage.getItem("token") || localStorage.getItem("access_token") || ""
-  );
+function Products() {
+  const { token: authToken } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const editMatch = useMatch("/produtos/edicao/:productId");
+  const editProductId = editMatch?.params?.productId || "";
+  const isCreateRoute = location.pathname === "/produtos/cadastro";
+  const isFormOpen = isCreateRoute || Boolean(editProductId);
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -34,9 +40,6 @@ function Products({ token = "" }) {
   const [statusLoadingId, setStatusLoadingId] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
-  const [isFormOpen, setIsFormOpen] = useState(
-    () => window.location.pathname === "/produtos/cadastro"
-  );
   const [editingProduct, setEditingProduct] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -85,6 +88,51 @@ function Products({ token = "" }) {
     return () => window.clearTimeout(timer);
   }, [feedbackMessage]);
 
+  useEffect(() => {
+    if (isCreateRoute) {
+      setEditingProduct(null);
+      return;
+    }
+
+    if (!editProductId) {
+      setEditingProduct(null);
+      return;
+    }
+
+    const existingProduct = products.find(
+      (product) => String(getProductId(product)) === String(editProductId)
+    );
+
+    if (existingProduct) {
+      setEditingProduct(existingProduct);
+      return;
+    }
+
+    let isMounted = true;
+
+    async function loadProductForEdit() {
+      try {
+        const data = await getProductById(editProductId, authToken);
+
+        if (isMounted) {
+          setEditingProduct(getProductFromResponse(data));
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error("Erro ao buscar produto para ediÃ§Ã£o:", error);
+          setErrorMessage(error.message || "NÃ£o foi possÃ­vel carregar o produto para ediÃ§Ã£o.");
+          navigate("/produtos", { replace: true });
+        }
+      }
+    }
+
+    loadProductForEdit();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [authToken, editProductId, isCreateRoute, navigate, products]);
+
   const filteredProducts = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
 
@@ -126,8 +174,7 @@ function Products({ token = "" }) {
 
   function openCreateForm() {
     setEditingProduct(null);
-    setIsFormOpen(true);
-    window.history.pushState(null, "", "/produtos/cadastro");
+    navigate("/produtos/cadastro");
   }
 
   function openEditForm(product) {
@@ -135,14 +182,12 @@ function Products({ token = "" }) {
 
     setSelectedProduct(null);
     setEditingProduct(product);
-    setIsFormOpen(true);
-    window.history.pushState(null, "", productId ? `/produtos/edicao/${productId}` : "/produtos");
+    navigate(productId ? `/produtos/edicao/${productId}` : "/produtos");
   }
 
   function closeForm() {
     setEditingProduct(null);
-    setIsFormOpen(false);
-    window.history.pushState(null, "", "/produtos");
+    navigate("/produtos");
   }
 
   async function handleSaveProduct(payload) {

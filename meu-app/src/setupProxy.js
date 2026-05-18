@@ -1,46 +1,15 @@
 const { createProxyMiddleware } = require("http-proxy-middleware");
+const { API_BASE_URL, API_PROXY_PREFIX } = require("./apiConfig");
 
 module.exports = function setupProxy(app) {
   app.use(
-    "/user",
+    API_PROXY_PREFIX,
     createProxyMiddleware({
-      target: "https://framework-backend-gm8v.onrender.com",
+      target: API_BASE_URL,
       changeOrigin: true,
-    })
-  );
-  app.use(
-    "/ativarUsuario",
-    createProxyMiddleware({
-      target: "https://framework-backend-gm8v.onrender.com",
-      changeOrigin: true,
-    })
-  );
-  app.use(
-    "/login",
-    createProxyMiddleware({
-      target: "https://framework-backend-gm8v.onrender.com",
-      changeOrigin: true,
-    })
-  );
-  app.use(
-    "/products",
-    createProxyMiddleware({
-      target: "https://framework-backend-gm8v.onrender.com",
-      changeOrigin: true,
-    })
-  );
-  app.use(
-    "/sales",
-    createProxyMiddleware({
-      target: "https://framework-backend-gm8v.onrender.com",
-      changeOrigin: true,
-    })
-  );
-  app.use(
-    "/reports",
-    createProxyMiddleware({
-      target: "https://framework-backend-gm8v.onrender.com",
-      changeOrigin: true,
+      pathRewrite: {
+        [`^${API_PROXY_PREFIX}`]: "",
+      },
     })
   );
 };

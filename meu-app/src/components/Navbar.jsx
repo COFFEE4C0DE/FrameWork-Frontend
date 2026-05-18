@@ -1,38 +1,41 @@
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
+
 const menuItems = [
+  { label: "Dashboard", href: "/home" },
   { label: "Produtos", href: "/produtos" },
-  // { label: "Cadastrar produto", href: "/produtos/cadastro" },
-  //{ label: "Editar produto", href: "/produtos/edicao" },
   { label: "Vendas", href: "/vendas" },
-  { label: "Dashboard", href: "/dashboard" },
 ];
 
 function Navbar() {
-  const currentPath = window.location.pathname;
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
-  function isActive(href) {
-    if (href === "/produtos") {
-      return currentPath === "/produtos" || currentPath.startsWith("/produtos/edicao");
-    }
-
-    return currentPath === href;
+  function handleLogout() {
+    logout();
+    navigate("/", { replace: true });
   }
 
   return (
     <header className="app-navbar">
-      <a className="app-brand" href="/home" aria-label="Início do sistema">
+      <NavLink className="app-brand" to="/home" aria-label="Inicio do sistema">
         twentyone market
-      </a>
+      </NavLink>
 
-      <nav className="app-nav" aria-label="Páginas do sistema">
+      <nav className="app-nav" aria-label="Paginas do sistema">
         {menuItems.map((item) => (
-          <a
+          <NavLink
             key={item.href}
-            href={item.href}
-            className={isActive(item.href) ? "is-active" : undefined}
+            to={item.href}
+            className={({ isActive }) => (isActive ? "is-active" : undefined)}
+            end={item.href === "/home"}
           >
             {item.label}
-          </a>
+          </NavLink>
         ))}
+        <button type="button" className="app-logout" onClick={handleLogout}>
+          Sair
+        </button>
       </nav>
     </header>
   );

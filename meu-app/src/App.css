@@ -168,15 +168,19 @@ select {
 }
 
 .cadastro-submit {
+  align-items: center;
   background: #df2a2a;
   border: 0;
   border-radius: 8px;
   color: #ffffff;
   cursor: pointer;
+  display: inline-flex;
   font-weight: 800;
+  justify-content: center;
   min-height: 52px;
   margin-top: 8px;
   padding: 0 18px;
+  text-decoration: none;
   transition: background 160ms ease, transform 160ms ease,
     box-shadow 160ms ease;
 }
@@ -378,6 +382,158 @@ select {
   text-decoration: underline;
 }
 
+.landing-page {
+  background: #f4f7fb;
+  min-height: 100vh;
+  padding: 40px 32px 56px;
+}
+
+.landing-hero {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  margin: 0 auto;
+  max-width: 1180px;
+}
+
+.landing-copy {
+  background: linear-gradient(165deg, #8d0000 0%, #b50909 68%, #7a0000 100%);
+  border-radius: 8px;
+  color: #ffffff;
+  padding: 44px;
+}
+
+.landing-eyebrow {
+  color: #f4d9d9;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.landing-copy h1 {
+  font-size: clamp(2.3rem, 5vw, 4.5rem);
+  line-height: 1;
+  margin: 16px 0;
+}
+
+.landing-copy p {
+  color: #f5e5e5;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 680px;
+}
+
+.landing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.landing-actions .cadastro-submit {
+  margin-top: 0;
+}
+
+.landing-actions .product-secondary-button {
+  border-color: rgba(255, 255, 255, 0.45);
+  color: #ffffff;
+}
+
+.landing-actions .product-secondary-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.landing-highlight {
+  display: grid;
+  gap: 14px;
+}
+
+.landing-highlight article,
+.landing-cards article {
+  background: #ffffff;
+  border: 1px solid #dfe7f2;
+  border-radius: 8px;
+  box-shadow: 0 18px 45px rgba(30, 45, 77, 0.08);
+}
+
+.landing-highlight article {
+  display: grid;
+  gap: 8px;
+  padding: 22px;
+}
+
+.landing-highlight strong,
+.landing-cards h2 {
+  color: #172033;
+}
+
+.landing-highlight p,
+.landing-cards p {
+  color: #526178;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.landing-cards {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 18px auto 0;
+  max-width: 1180px;
+}
+
+.landing-cards article {
+  padding: 28px;
+}
+
+.landing-cards span {
+  color: #8d0000;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.landing-cards h2 {
+  font-size: 1.35rem;
+  margin: 14px 0 10px;
+}
+
+.dashboard-page {
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  align-items: flex-start;
+}
+
+.dashboard-stats strong {
+  font-size: clamp(1.8rem, 3.4vw, 2.5rem);
+}
+
+.dashboard-links {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 0;
+  padding: 0 32px 56px;
+}
+
+.dashboard-links article {
+  display: grid;
+  gap: 12px;
+}
+
+.dashboard-link {
+  color: #8d0000;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.dashboard-link:hover {
+  text-decoration: underline;
+}
+
 .home-page {
   background: #f4f7fb;
   min-height: 100vh;
@@ -413,9 +569,11 @@ select {
   justify-content: flex-end;
 }
 
-.app-nav a {
+.app-nav a,
+.app-nav button {
   border-radius: 8px;
   color: #33415c;
+  cursor: pointer;
   font-size: 0.9rem;
   font-weight: 800;
   min-height: 40px;
@@ -424,7 +582,13 @@ select {
   transition: background 160ms ease, color 160ms ease;
 }
 
-.app-nav a:hover {
+.app-nav button {
+  background: transparent;
+  border: 0;
+}
+
+.app-nav a:hover,
+.app-nav button:hover {
   background: #fff2f2;
   color: #8d0000;
 }
@@ -432,6 +596,10 @@ select {
 .app-nav a.is-active {
   background: #8d0000;
   color: #ffffff;
+}
+
+.app-logout {
+  color: #8d0000;
 }
 
 .home-hero {
@@ -574,11 +742,15 @@ select {
 .product-secondary-button,
 .product-card-actions button,
 .product-details-actions button {
+  align-items: center;
   border-radius: 8px;
   cursor: pointer;
+  display: inline-flex;
   font-weight: 800;
+  justify-content: center;
   min-height: 44px;
   padding: 0 16px;
+  text-decoration: none;
   transition: background 160ms ease, border-color 160ms ease, color 160ms ease,
     transform 160ms ease;
 }
@@ -760,10 +932,18 @@ select {
 }
 
 .product-card-image img,
-.product-details-image img,
+.product-details-image img {
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  padding: 12px;
+  width: 100%;
+}
+
 .product-image-preview img {
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   width: 100%;
 }
 
@@ -1262,7 +1442,9 @@ select {
 
 .product-sale-image img {
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
+  padding: 6px;
   width: 100%;
 }
 
@@ -1574,6 +1756,27 @@ select {
     justify-content: flex-start;
   }
 
+  .landing-page {
+    padding: 20px;
+  }
+
+  .landing-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-copy {
+    padding: 34px 24px;
+  }
+
+  .landing-cards {
+    grid-template-columns: 1fr;
+    margin-top: 14px;
+  }
+
+  .dashboard-links {
+    padding: 0 20px 36px;
+  }
+
   .home-hero {
     grid-template-columns: 1fr;
     padding: 28px 20px 20px;
@@ -1669,6 +1872,10 @@ select {
 @media (max-width: 520px) {
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .landing-actions button {
+    width: 100%;
   }
 
   .products-stats {
